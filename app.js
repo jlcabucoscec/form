@@ -143,13 +143,41 @@ function handleParse() {
   let raw = rawInputEl.value.trim();
   if (!raw) { showToast('Paste some data first.', 'warn'); return; }
 
-  // Split into blocks separated by blank lines
-  const blocks = raw.split(/\n\s*\n/).map(b => {
+  // ── Step 1: Split entries that are individually quoted  ──────
+  //   Handles paste like:  "LAST NAME: A\n...Action"\n"LAST NAME: B\n..."
+  //   The closing-quote + newline + opening-quote boundary is the delimiter.
+  // Also handles blank-line-separated entries normally.
+
+  // First, split on the  "\n"  boundary (end-quote ➜ newline ➜ open-quote)
+  let fragments = raw.split(/"\s*\n\s*"/).map(b => {
     b = b.trim();
-    // Strip surrounding double-quotes (each entry from spreadsheet formulas)
-    if (b.startsWith('"') && b.endsWith('"')) b = b.slice(1, -1).trim();
-    return b;
+    // Strip any remaining leading/trailing quotes left over from the split
+    if (b.startsWith('"')) b = b.slice(1);
+    if (b.endsWith('"'))   b = b.slice(0, -1);
+    return b.trim();
   }).filter(Boolean);
+
+  // If the split above produced only 1 fragment, fall back to blank-line split
+  if (fragments.length <= 1) {
+    fragments = raw.split(/\n\s*\n/).map(b => {
+      b = b.trim();
+      if (b.startsWith('"') && b.endsWith('"')) b = b.slice(1, -1).trim();
+      return b;
+    }).filter(Boolean);
+  }
+
+  // ── Step 2: Sub-split any block that contains more than one record  ──
+  //   If someone pastes two entries with NO blank line and NO quotes,
+  //   detect the repeated "LAST NAME:" label and split there.
+  const blocks = [];
+  for (const frag of fragments) {
+    // Look for repeated occurrences of a known leading label (case-insensitive)
+    const parts = frag.split(/(?=^LAST NAME\s*:)/im);
+    for (const p of parts) {
+      const trimmed = p.trim();
+      if (trimmed) blocks.push(trimmed);
+    }
+  }
 
   const parsed = blocks.map((block, idx) => {
     const fields = parseBlock(block);
