@@ -2,16 +2,16 @@
    CEC Form Submission Tool — app.js
    ============================================================
    Entry ID Map (from data-params in Google Form HTML):
-   - LAST NAME          → entry.1109815499
-   - FIRST NAME         → entry.705218577
-   - COURSE             → entry.1635498050
-   - YEAR               → entry.YEAR_ID (set below — update when found)
-   - SUBJECT CODE       → entry.943988708
-   - SUBJECT TITLE      → entry.560266358
-   - TERM FAILED        → entry.304427281
-   - REASON FOR FAILURE → entry.86770068
-   - WHEN STARTED       → entry.833249190
-   - ACTION TAKEN       → entry.722132350
+   - LAST NAME          → entry.1494127266
+   - FIRST NAME         → entry.407058998
+   - COURSE             → entry.2111276978
+   - YEAR               → entry.277988988
+   - SUBJECT CODE       → entry.1007711839
+   - SUBJECT TITLE      → entry.1268690963
+   - TERM FAILED        → entry.2064075136
+   - REASON FOR FAILURE → entry.262618840
+   - WHEN STARTED       → entry.194547843
+   - ACTION TAKEN       → entry.14948311
    ============================================================ */
 
 'use strict';
@@ -20,18 +20,18 @@ const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf7Ns60bv4XctvPo82epE
 
 // ── Entry ID map ──────────────────────────────────────────────
 const ENTRY_MAP = {
-  'LAST NAME': 'entry.1109815499',
-  'FIRST NAME': 'entry.705218577',
-  'COURSE': 'entry.1635498050',
-  'YEAR': 'entry.601164691',
-  'SUBJECT CODE': 'entry.943988708',
-  'SUBJECT TITLE': 'entry.560266358',
-  'TERM FAILED': 'entry.304427281',
-  'PROVIDE THE REASON FOR THE STUDENT\'S FAILURE': 'entry.86770068',
-  'REASON FOR FAILURE': 'entry.86770068',
-  'WHEN IT WAS STARTED?': 'entry.833249190',
-  'WHEN STARTED': 'entry.833249190',
-  'ACTION TAKEN': 'entry.722132350',
+  'LAST NAME': 'entry.1494127266',
+  'FIRST NAME': 'entry.407058998',
+  'COURSE': 'entry.2111276978',
+  'YEAR': 'entry.277988988',
+  'SUBJECT CODE': 'entry.1007711839',
+  'SUBJECT TITLE': 'entry.1268690963',
+  'TERM FAILED': 'entry.2064075136',
+  'PROVIDE THE REASON FOR THE STUDENT\'S FAILURE': 'entry.262618840',
+  'REASON FOR FAILURE': 'entry.262618840',
+  'WHEN IT WAS STARTED?': 'entry.194547843',
+  'WHEN STARTED': 'entry.194547843',
+  'ACTION TAKEN': 'entry.14948311',
 };
 
 // ── Canonical label aliases (normalise user input → entry key) ─
@@ -65,14 +65,14 @@ const LABEL_ALIASES = {
 
 // ── Dropdown value maps (normalise free-text → accepted option) ─
 const VALUE_ALIASES = {
-  'entry.1635498050': { // COURSE
+  'entry.2111276978': { // COURSE
     'BSIT': 'BSIT', 'BEED': 'BEED',
     'BSED': 'BSED - MATHEMATICS',
     'BSED - MATHEMATICS': 'BSED - MATHEMATICS',
     'BSED - ENGLISH': 'BSED - ENGLISH',
     'BSTM': 'BSTM', 'BSHM': 'BSHM', 'BSCRIM': 'BSCRIM',
   },
-  'entry.601164691': { // YEAR (year level, NOT school year)
+  'entry.277988988': { // YEAR (year level, NOT school year)
     '1ST': '1ST', '1': '1ST', 'FIRST': '1ST',
     '1ST YEAR': '1ST', 'FIRST YEAR': '1ST',
     '2ND': '2ND', '2': '2ND', 'SECOND': '2ND',
@@ -82,21 +82,21 @@ const VALUE_ALIASES = {
     '4TH': '4TH', '4': '4TH', 'FOURTH': '4TH',
     '4TH YEAR': '4TH', 'FOURTH YEAR': '4TH',
   },
-  'entry.304427281': { // TERM FAILED
+  'entry.2064075136': { // TERM FAILED
     'PRELIM': 'PRELIM', 'MIDTERM': 'MIDTERM',
     'SEMI-FINALS': 'SEMI-FINALS', 'SEMIFINALS': 'SEMI-FINALS',
     'FINALS': 'FINALS',
   },
-  'entry.86770068': { // REASON FOR FAILURE (radio with "Other")
+  'entry.262618840': { // REASON FOR FAILURE (radio with "Other")
     'STOPPED': 'STOPPED', 'WITHDRAW': 'WITHDRAW',
     'DROPOUT': 'DROPOUT',
   },
-  'entry.833249190': { // WHEN STARTED
+  'entry.194547843': { // WHEN STARTED
     'PRELIM': 'PRELIM', 'MIDTERM': 'MIDTERM',
     'SEMI-FINALS': 'SEMI-FINALS', 'SEMIFINALS': 'SEMI-FINALS',
     'FINALS': 'FINALS',
   },
-  'entry.722132350': { // ACTION TAKEN (radio with "Other")
+  'entry.14948311': { // ACTION TAKEN (radio with "Other")
     'STUDENT AWARENESS': 'STUDENT AWARENESS',
     'PARENTS ACKNOWLEDGEMENT': 'PARENTS ACKNOWLEDGEMENT',
     'REMEDIAL TEACHING': 'REMEDIAL TEACHING',
@@ -105,8 +105,8 @@ const VALUE_ALIASES = {
 
 // Fields that have an "Other" radio option in Google Forms
 const OTHER_OPTION_FIELDS = new Set([
-  'entry.86770068',   // REASON FOR FAILURE
-  'entry.722132350',  // ACTION TAKEN
+  'entry.262618840',   // REASON FOR FAILURE
+  'entry.14948311',  // ACTION TAKEN
 ]);
 
 // ── State ─────────────────────────────────────────────────────
@@ -236,11 +236,11 @@ function renderQueue() {
 function buildTodoItem(entry) {
   const { id, data, status, msg } = entry;
 
-  const lastName = data['entry.1109815499'] || '—';
-  const firstName = data['entry.705218577'] || '—';
-  const course = data['entry.1635498050'] || '';
-  const subject = data['entry.943988708'] || data['entry.560266358'] || '';
-  const term = data['entry.304427281'] || '';
+  const lastName = data['entry.1494127266'] || '—';
+  const firstName = data['entry.407058998'] || '—';
+  const course = data['entry.2111276978'] || '';
+  const subject = data['entry.1007711839'] || data['entry.1268690963'] || '';
+  const term = data['entry.2064075136'] || '';
 
   const icons = { pending: '⏳', running: '🔄', success: '✅', error: '❌' };
   const icon = icons[status] || '⏳';
@@ -345,27 +345,27 @@ async function submitEntry(url, entry) {
     }
   }
 
-  const name = `${data['entry.1109815499'] || '?'}, ${data['entry.705218577'] || '?'}`;
+  const name = `${data['entry.1494127266'] || '?'}, ${data['entry.407058998'] || '?'}`;
 
   // ── Detailed console logging ──────────────────────────────
   const FIELD_LABELS = {
-    'entry.1109815499': 'LAST NAME',
-    'entry.705218577':  'FIRST NAME',
-    'entry.1635498050': 'COURSE',
-    'entry.601164691':  'YEAR',
-    'entry.943988708':  'SUBJECT CODE',
-    'entry.560266358':  'SUBJECT TITLE',
-    'entry.304427281':  'TERM FAILED',
-    'entry.86770068':   'REASON FOR FAILURE',
-    'entry.833249190':  'WHEN STARTED',
-    'entry.722132350':  'ACTION TAKEN',
+    'entry.1494127266': 'LAST NAME',
+    'entry.407058998': 'FIRST NAME',
+    'entry.2111276978': 'COURSE',
+    'entry.277988988': 'YEAR',
+    'entry.1007711839': 'SUBJECT CODE',
+    'entry.1268690963': 'SUBJECT TITLE',
+    'entry.2064075136': 'TERM FAILED',
+    'entry.262618840': 'REASON FOR FAILURE',
+    'entry.194547843': 'WHEN STARTED',
+    'entry.14948311': 'ACTION TAKEN',
   };
 
   const REQUIRED_ENTRIES = [
-    'entry.1109815499', 'entry.705218577', 'entry.1635498050',
-    'entry.601164691', 'entry.943988708', 'entry.560266358',
-    'entry.304427281', 'entry.86770068', 'entry.833249190',
-    'entry.722132350',
+    'entry.1494127266', 'entry.407058998', 'entry.2111276978',
+    'entry.277988988', 'entry.1007711839', 'entry.1268690963',
+    'entry.2064075136', 'entry.262618840', 'entry.194547843',
+    'entry.14948311',
   ];
 
   // Log each field
@@ -375,7 +375,7 @@ async function submitEntry(url, entry) {
     const value = params[entryId];
     if (value) {
       const display = value === '__other_option__'
-        ? `Other → "${params[entryId + '.other_option_response'] || ''}"` 
+        ? `Other → "${params[entryId + '.other_option_response'] || ''}"`
         : `"${value}"`;
       console.log(`  ✅ ${label}: ${display}`);
     } else {
