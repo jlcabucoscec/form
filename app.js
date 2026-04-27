@@ -16,7 +16,7 @@
 
 'use strict';
 
-const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf7Ns60bv4XctvPo82epEUU--DN9FsSsitB_U92jUMiJQMZUA/formResponse';
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfYU0gXudPBCZPIp3OeYqU14t9jkX-MGYn2FFKymPEfoGjMjQ/formResponse';
 
 // ── Entry ID map ──────────────────────────────────────────────
 const ENTRY_MAP = {
