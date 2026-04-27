@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CEC Form Submission Tool</title>
+  <meta name="description" content="Bulk submit student failure reports to Google Forms automatically." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-icon">📋</div>
+      <div class="header-text">
+        <h1>CEC Form Submission Tool</h1>
+        <p>Paste student failure data below and submit directly to Google Forms</p>
+      </div>
+      <div class="header-badge">GitHub Pages</div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+      <!-- Left: Input Panel -->
+      <section class="input-panel card">
+        <div class="panel-header">
+          <span class="panel-icon">✏️</span>
+          <h2>Paste Student Data</h2>
+          <span class="entry-count" id="entry-count">0 entries</span>
+        </div>
+
+        <div class="format-hint">
+          <strong>Format</strong> — Each entry block separated by a blank line:
+          <pre>LAST NAME: JAYME
+FIRST NAME: HANNY ROSE L.
+COURSE: BSIT
+YEAR: 2ND
+SUBJECT CODE: IT ADET 22
+TERM FAILED: FINALS
+PROVIDE THE REASON FOR THE STUDENT'S FAILURE: The student's grades...
+WHEN IT WAS STARTED?: Semifinals
+ACTION TAKEN: Student Awareness</pre>
+        </div>
+
+        <textarea id="raw-input" placeholder="Paste your data here...&#10;&#10;You can paste multiple entries separated by a blank line."></textarea>
+
+        <div class="input-actions">
+          <button id="parse-btn" class="btn btn-secondary">
+            <span>🔍</span> Parse Entries
+          </button>
+          <button id="clear-btn" class="btn btn-ghost">
+            <span>🗑</span> Clear
+          </button>
+        </div>
+      </section>
+
+      <!-- Right: Queue + Submit -->
+      <section class="queue-panel card">
+        <div class="panel-header">
+          <span class="panel-icon">🚀</span>
+          <h2>Submission Queue</h2>
+          <div class="progress-summary" id="progress-summary">
+            <span class="pill pending" id="pill-pending">0 pending</span>
+            <span class="pill success" id="pill-success">0 done</span>
+            <span class="pill error" id="pill-error">0 failed</span>
+          </div>
+        </div>
+
+        <div class="todo-list" id="todo-list">
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No entries yet. Paste data on the left and click <strong>Parse Entries</strong>.</p>
+          </div>
+        </div>
+
+        <div class="queue-actions">
+          <button id="submit-all-btn" class="btn btn-primary" disabled>
+            <span class="btn-spinner" id="submit-spinner" style="display:none"></span>
+            <span id="submit-label">⚡ Submit All</span>
+          </button>
+          <button id="reset-btn" class="btn btn-ghost" style="display:none">
+            <span>↩</span> Reset Queue
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Log Panel -->
+    <div class="log-panel card" id="log-panel" style="display:none">
+      <div class="panel-header">
+        <span class="panel-icon">📜</span>
+        <h2>Submission Log</h2>
+        <button id="clear-log-btn" class="btn btn-ghost btn-sm">Clear</button>
+      </div>
+      <div class="log-output" id="log-output"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
