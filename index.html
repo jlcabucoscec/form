@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChromaCraft Pro — High-Precision Green Screen Remover</title>
+  <meta name="description" content="Professional studio-grade client-side green screen remover and background replacement tool with advanced despill, smooth edge feathering, and instant full-resolution export.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand-wrapper">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" stroke="currentColor">
+          <circle cx="6" cy="6" r="3" />
+          <circle cx="6" cy="18" r="3" />
+          <line x1="20" y1="4" x2="8.12" y2="15.88" />
+          <line x1="14.47" y1="14.48" x2="20" y2="20" />
+          <line x1="8.12" y1="8.12" x2="12" y2="12" />
+        </svg>
+      </div>
+      <div class="brand-info">
+        <h1>ChromaCraft <span class="badge-pro">Studio Pro</span></h1>
+        <div class="brand-tagline">High-Fidelity Chroma Key & Background Studio</div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="security-pill">
+        <span class="security-dot"></span>
+        <span>100% Client-Side Engine • Private & Instant</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+      <button class="btn btn-secondary" id="btnUploadNew">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <span>Upload Image</span>
+      </button>
+
+      <button class="btn btn-secondary" id="btnCopyClipboard" title="Copy transparent PNG to clipboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span>Copy Image</span>
+      </button>
+
+      <button class="btn btn-primary" id="btnDownloadTransparent">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Export PNG</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Studio Workspace -->
+  <main class="app-container">
+    <!-- Viewport Panel -->
+    <section class="viewport-panel">
+      <!-- Toolbar -->
+      <div class="viewport-toolbar">
+        <div class="view-mode-tabs">
+          <button class="tab-btn active" data-mode="split" id="tabSplit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="12" y1="3" x2="12" y2="21"></line>
+            </svg>
+            <span>Split Slider</span>
+          </button>
+          <button class="tab-btn" data-mode="result" id="tabResult">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+            <span>Clean Cutout</span>
+          </button>
+          <button class="tab-btn" data-mode="mask" id="tabMask">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <span>Alpha Matte</span>
+          </button>
+          <button class="tab-btn" data-mode="original" id="tabOriginal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            </svg>
+            <span>Original</span>
+          </button>
+        </div>
+
+        <div class="zoom-pan-controls">
+          <button class="btn-icon" id="btnZoomOut" title="Zoom Out (Ctrl + -)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+          </button>
+          <span class="zoom-badge" id="zoomLevelText">100%</span>
+          <button class="btn-icon" id="btnZoomIn" title="Zoom In (Ctrl + +)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="11" y1="8" x2="11" y2="14"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+          </button>
+          <button class="btn-icon" id="btnZoomFit" title="Fit to Screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+          </button>
+          <button class="btn-icon" id="btnResetView" title="Reset 100%">1:1</button>
+        </div>
+      </div>
+
+      <!-- Canvas Stage & Work Area -->
+      <div class="canvas-stage" id="canvasStage">
+        <!-- Drag & Drop Upload Initial Overlay -->
+        <div class="dropzone-overlay" id="dropzoneOverlay">
+          <div class="drop-card" id="dropCard">
+            <div class="drop-icon-pulse">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+                <path d="M12 12v9"></path>
+                <path d="m16 16-4-4-4 4"></path>
+              </svg>
+            </div>
+            <h2 class="drop-title">Drop your Green Screen Image</h2>
+            <p class="drop-desc">Supports high-res PNG, JPG, and WebP. All processing runs privately on your device GPU/CPU.</p>
+            <button class="btn btn-primary" id="btnBrowseDrop">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <span>Browse Image File</span>
+            </button>
+
+            <div class="samples-divider">
+              <span>Or test with logo & studio samples</span>
+            </div>
+
+            <div class="sample-buttons sample-buttons-grid">
+              <div class="sample-card sample-logo-card" id="sampleIntramuralsBtn" title="Intramurals 2026 Logo (White bg, white text)">
+                <img src="samples/logo-intramurals.jpg" class="sample-thumbnail" alt="Intramurals 2026 Logo">
+                <span class="sample-title">Intramurals '26</span>
+              </div>
+              <div class="sample-card sample-logo-card" id="sampleShieldBtn" title="College of Criminal Justice Shield (White bg, white text & emblem)">
+                <img src="samples/logo-shield.png" class="sample-thumbnail" alt="Criminal Justice Shield">
+                <span class="sample-title">Criminal Justice</span>
+              </div>
+              <div class="sample-card sample-logo-card" id="sampleBlueDragonBtn" title="Blue Dragon Esports (Navy bg, dragon mascot)">
+                <img src="samples/logo-bluedragon.png" class="sample-thumbnail" alt="Blue Dragon Esports">
+                <span class="sample-title">Blue Dragon</span>
+              </div>
+              <div class="sample-card sample-logo-card" id="sampleSealBtn" title="CEC Crest Seal (White bg, white inner badge)">
+                <img src="samples/logo-seal.jpg" class="sample-thumbnail" alt="CEC Crest Seal">
+                <span class="sample-title">Crest Seal</span>
+              </div>
+              <div class="sample-card" id="samplePortraitBtn" title="Studio Portrait (Green screen photo)">
+                <img src="samples/portrait.jpg" class="sample-thumbnail" alt="Portrait green screen sample">
+                <span class="sample-title">Studio Photo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pan & Zoom Wrapper -->
+        <div class="canvas-viewport-wrapper" id="canvasViewportWrapper">
+          <div class="canvas-artboard transparency-grid-dark" id="canvasArtboard">
+            <!-- Custom Backdrop (Solid/Gradient/Image) -->
+            <div class="custom-backdrop-layer" id="customBackdropLayer"></div>
+
+            <!-- Active Keyed Main Canvas -->
+            <canvas id="mainCanvas"></canvas>
+
+            <!-- Split Slider Overlay -->
+            <div class="split-slider-container" id="splitSliderContainer">
+              <div class="split-original-canvas-wrap" id="splitOriginalWrap">
+                <canvas id="originalCanvas"></canvas>
+              </div>
+              <div class="split-divider-handle" id="splitHandle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                  <polyline points="9 18 15 12 9 6" style="display:none;"></polyline>
+                  <path d="m8 9-3 3 3 3m8-6 3 3-3 3"/>
+                </svg>
+              </div>
+              <div class="split-label-before" id="splitLabelBefore">Original Green Screen</div>
+              <div class="split-label-after" id="splitLabelAfter">Keyed & Despilled</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Eyedropper Magnifier Loupe -->
+        <div class="eyedropper-loupe" id="eyedropperLoupe">
+          <canvas id="loupeCanvas" width="100" height="100"></canvas>
+          <div class="loupe-crosshair"></div>
+          <div class="loupe-swatch" id="loupeSwatch">#00FF00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Studio Controls Sidebar -->
+    <aside class="controls-sidebar">
+      <!-- Mode Switcher: Studio Chroma vs Logo & Graphics -->
+      <div class="control-section mode-selector-section">
+        <div class="mode-toggle-group">
+          <button class="mode-toggle-btn active" id="btnModeStudio" data-engine-mode="studio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M6 20v-2a6 6 0 0 1 12 0v2"></path>
+            </svg>
+            <span>Studio Photo</span>
+          </button>
+          <button class="mode-toggle-btn" id="btnModeLogo" data-engine-mode="logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>Logo & Graphics</span>
+          </button>
+        </div>
+
+        <!-- Logo Protection Info Banner -->
+        <div class="logo-mode-banner" id="logoModeBanner" style="display: none;">
+          <div class="logo-banner-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+            <span>Interior Content Protected</span>
+          </div>
+          <p class="logo-banner-desc">Removes only outer border background. White text, emblems, badges & sports icons stay 100% intact.</p>
+        </div>
+      </div>
+
+      <!-- Section 1: Key Color Picker -->
+      <div class="control-section">
+        <div class="section-title">
+          <span>1. Key Background Color</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="m15 14 5-5-3-3-5 5"></path>
+            <path d="m9 20 6-6-3-3-6 6"></path>
+            <path d="m2 22 3-3"></path>
+          </svg>
+        </div>
+
+        <div class="color-picker-row">
+          <div class="color-preview-box" id="colorPreviewBox" style="background-color: #00b140;" title="Click to open color picker">
+            <input type="color" id="nativeColorInput" value="#00b140">
+          </div>
+          <div class="color-meta">
+            <div class="color-hex-text" id="colorHexText">#00B140</div>
+            <div class="color-rgb-text" id="colorRgbText">RGB (0, 177, 64)</div>
+          </div>
+        </div>
+
+        <div class="color-buttons-row">
+          <button class="btn btn-secondary" id="btnEyedropper" style="flex: 1;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="m14 7 3 3m-9 9-4 1 1-4L16 6a2.828 2.828 0 1 1 4 4L9 20z"></path>
+            </svg>
+            <span id="eyedropperBtnText">Pick from Image</span>
+          </button>
+          <button class="btn btn-secondary" id="btnAutoDetect" title="Auto-detect background color from corners">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"></path>
+            </svg>
+            <span>Auto</span>
+          </button>
+        </div>
+
+        <div class="control-label" style="margin-bottom: 8px; font-size: 0.75rem; color: var(--text-muted);">Quick Presets:</div>
+        <div class="color-presets-row">
+          <div class="preset-chip" style="background-color: #ffffff; border: 2px solid #cbd5e1;" data-color="#ffffff" title="Pure White Background (Logos)"></div>
+          <div class="preset-chip" style="background-color: #0e1e38;" data-color="#0e1e38" title="Dark Navy Background"></div>
+          <div class="preset-chip" style="background-color: #000000;" data-color="#000000" title="Pure Black Background"></div>
+          <div class="preset-chip active" style="background-color: #00b140;" data-color="#00b140" title="Studio Chroma Green"></div>
+          <div class="preset-chip" style="background-color: #00ff00;" data-color="#00ff00" title="Pure Neon Green"></div>
+          <div class="preset-chip" style="background-color: #0047bb;" data-color="#0047bb" title="Hollywood Blue Screen"></div>
+        </div>
+      </div>
+
+      <!-- Section 2: Chroma Key / Logo Matte Refinement -->
+      <div class="control-section">
+        <div class="section-title">
+          <span>2. Matte & Edge Refinement</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </div>
+
+        <!-- Logo Contiguous Protection Switch -->
+        <div class="control-group" id="groupContiguous" style="display: none;">
+          <div class="toggle-control-row">
+            <div class="toggle-text-wrap">
+              <span class="control-label">Protect Logo Interior</span>
+              <span class="control-sublabel">Preserve white text, crests & icons</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="chkContiguous" checked>
+              <span class="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label">Key Tolerance</span>
+            <span class="control-value" id="valTolerance">38%</span>
+          </div>
+          <input type="range" id="sliderTolerance" min="3" max="95" value="38">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label">Edge Softness / Feather</span>
+            <span class="control-value" id="valSmoothness">15%</span>
+          </div>
+          <input type="range" id="sliderSmoothness" min="1" max="50" value="15">
+        </div>
+
+        <!-- Logo Defringe / Halo Clean Slider -->
+        <div class="control-group" id="groupDefringe" style="display: none;">
+          <div class="control-label-row">
+            <span class="control-label">Clean Edge Halo (Defringe)</span>
+            <span class="control-value" id="valDefringe">80%</span>
+          </div>
+          <input type="range" id="sliderDefringe" min="0" max="100" value="80">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label">Edge Choke (Shrink/Grow)</span>
+            <span class="control-value" id="valChoke">0px</span>
+          </div>
+          <input type="range" id="sliderChoke" min="-4" max="4" value="0" step="1">
+        </div>
+
+        <!-- Interactive Punch Enclosed Pocket Tool -->
+        <div class="control-group" id="groupPocketPunch" style="display: none;">
+          <div class="control-label-row">
+            <span class="control-label">Enclosed Background Holes</span>
+            <span class="control-value" id="valPocketsCount">0 punched</span>
+          </div>
+          <div class="pocket-punch-row">
+            <button class="btn btn-secondary" id="btnPunchTool" style="flex: 1;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="9"></circle>
+                <line x1="9" y1="12" x2="15" y2="12"></line>
+                <line x1="12" y1="9" x2="12" y2="15"></line>
+              </svg>
+              <span id="punchBtnText">Punch Enclosed Hole</span>
+            </button>
+            <button class="btn-icon" id="btnClearPockets" title="Clear all punched holes" style="display: none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="control-group" id="groupShadow">
+          <div class="control-label-row">
+            <span class="control-label">Preserve Cast Shadows</span>
+            <span class="control-value" id="valShadow">0%</span>
+          </div>
+          <input type="range" id="sliderShadow" min="0" max="100" value="0">
+        </div>
+      </div>
+
+      <!-- Section 3: Spill Suppression (Despill) -->
+      <div class="control-section" id="sectionSpill">
+        <div class="section-title">
+          <span>3. Green Spill Suppression</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label">Spill Removal Strength</span>
+            <span class="control-value" id="valDespill">70%</span>
+          </div>
+          <input type="range" id="sliderDespill" min="0" max="100" value="70">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label">Despill Tuning Mode</span>
+          </div>
+          <div class="pill-selector">
+            <button class="pill-opt active" data-despill-mode="warm" id="optDespillWarm">Skin Warm</button>
+            <button class="pill-opt" data-despill-mode="neutral" id="optDespillNeutral">Neutral</button>
+            <button class="pill-opt" data-despill-mode="cool" id="optDespillCool">Cool Bias</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Backdrop Replacement -->
+      <div class="control-section">
+        <div class="section-title">
+          <span>4. Background Backdrop</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <path d="M3 9h18M9 21V9"></path>
+          </svg>
+        </div>
+
+        <div class="backdrop-grid">
+          <div class="bg-card-opt transparency-grid-dark active" data-bg="checker-dark" title="Dark Transparent Grid">
+            <span>Dark Grid</span>
+          </div>
+          <div class="bg-card-opt transparency-grid-light" data-bg="checker-light" title="Light Transparent Grid">
+            <span style="color: #0f172a;">Light Grid</span>
+          </div>
+          <div class="bg-card-opt" data-bg="solid-black" style="background-color: #000000;" title="Pure Black">
+            <span>Black</span>
+          </div>
+          <div class="bg-card-opt" data-bg="solid-white" style="background-color: #ffffff;" title="Clean Studio White">
+            <span style="color: #0f172a;">White</span>
+          </div>
+          <div class="bg-card-opt" data-bg="gradient-sunset" style="background: linear-gradient(135deg, #ff7e5f, #feb47b);" title="Sunset Glow Gradient">
+            <span>Sunset</span>
+          </div>
+          <div class="bg-card-opt" data-bg="gradient-cyber" style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);" title="Cyber Studio Gradient">
+            <span>Cyber</span>
+          </div>
+          <div class="bg-card-opt" data-bg="scenic-penthouse" style="background: url('samples/penthouse.jpg') center/cover;" title="Luxury Sunset Penthouse">
+            <span>Penthouse</span>
+          </div>
+          <div class="bg-card-opt" data-bg="custom-image" id="bgCardCustom" style="background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.2);" title="Upload Custom Backdrop">
+            <span>+ Upload</span>
+          </div>
+        </div>
+
+        <input type="file" id="bgImageFileInput" accept="image/*" style="display: none;">
+      </div>
+
+      <!-- Section 5: Subject Color Adjustments -->
+      <div class="control-section">
+        <div class="section-title">
+          <span>5. Foreground Color Match</span>
+          <a href="#" id="btnResetAdjustments" style="font-size: 0.7rem; color: var(--color-green); text-decoration: none;">Reset</a>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label">Brightness</span>
+            <span class="control-value" id="valBrightness">0%</span>
+          </div>
+          <input type="range" id="sliderBrightness" min="-50" max="50" value="0">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label">Contrast</span>
+            <span class="control-value" id="valContrast">0%</span>
+          </div>
+          <input type="range" id="sliderContrast" min="-50" max="50" value="0">
+        </div>
+
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label">Saturation</span>
+            <span class="control-value" id="valSaturation">0%</span>
+          </div>
+          <input type="range" id="sliderSaturation" min="-50" max="50" value="0">
+        </div>
+      </div>
+
+      <!-- Bottom Panel Actions -->
+      <div class="export-panel">
+        <div class="image-meta-info">
+          <span id="lblDimensions">Dimensions: 0 × 0 px</span>
+          <span id="lblRenderTime">Render: 0ms</span>
+        </div>
+        <button class="btn btn-primary" id="btnDownloadTransparentBottom" style="width: 100%; justify-content: center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Download Transparent PNG</span>
+        </button>
+        <button class="btn btn-secondary" id="btnDownloadComposite" style="width: 100%; justify-content: center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <span>Download with Background</span>
+        </button>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Notification Toast -->
+  <div class="toast-msg" id="toastMsg">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="toastText">Image copied to clipboard!</span>
+  </div>
+
+  <script src="chroma-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
